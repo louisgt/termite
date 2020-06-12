@@ -19,11 +19,23 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 
   	// Read file and create gene instances with separate ORFs
   	while(in.read_row(name, accession, chr, strand, txStart, txEnd, cdsStart, cdsEnd, exonCount, exonStarts, exonEnds)){
+	 	
 	 	exonStartCoords = scanExons(exonStarts);
 	 	exonEndCoords  = scanExons(exonEnds);
 
-	 	int orf_start = exonStartCoords[0];
-	 	int orf_end = exonEndCoords.back();
+	 	std::pair<int,int> firstExon;
+	 	std::pair<int,int> lastExon;
+
+	 	// find coding exons and create pairs
+	 	try{
+	 		firstExon = firstCodingExon(strand,cdsStart,exonStartCoords,exonEndCoords);
+	 		lastExon = lastCodingExon(strand,cdsEnd,exonStartCoords,exonEndCoords);
+	 	}
+	 	catch(const std::invalid_argument& e){
+	 		std::cerr << "Exception thrown: " << e.what() << std::endl;
+	 	}
+
+	 	//std::cout << firstExon.first << "-" << firstExon.second << std::endl;
 
 	 	// try to find gene in map
 	 	auto it = gm.find(name);
@@ -31,14 +43,14 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 	 	if(it != gm.end()){
 	 		std::cout << name << " is an element of mymap." << std::endl;
       		// compare with existing ORFs for that gene
-      		it->second.searchORFs(orf_start,orf_end,chr);
+      		it->second.searchORFs(cdsStart,cdsEnd,chr);
 	 	}
 
     	else {
     		std::cout << name << " is not an element of mymap." << std::endl;
     		gm.emplace(std::piecewise_construct, 
 	 		std::forward_as_tuple(name), 
-	 		std::forward_as_tuple(name, orf_start, orf_end, chr));
+	 		std::forward_as_tuple(name, cdsStart, cdsEnd, chr));
     	}
 	}
 }
@@ -90,7 +102,7 @@ int main () {
 			std::to_string(o.getStart()).c_str(),
 			std::to_string(o.getEnd()).c_str());
 			auto result = exec(cmd);
-			std::cout << result << std::endl;
+			//std::cout << result << std::endl;
 
 		}
 	}

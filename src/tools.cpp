@@ -20,3 +20,43 @@ std::vector<int> scanExons(std::string exonList){
 
 	return result;
 }
+
+std::pair<int,int> firstCodingExon(char strand, int cdsStart, std::vector<int> exonStarts, std::vector<int> exonEnds){
+	
+	if(strand != '+' && strand != '-')
+		throw std::runtime_error( "Invalid strand value in gene table." );
+
+	int currentExon = 0;
+
+	// we want to identify the index of the first coding exon
+	while(cdsStart>exonStarts[currentExon]){
+		// lookup next exon
+		if(cdsStart<exonStarts[currentExon+1])
+			// ATG is located in currentExon
+			break;
+		currentExon++;
+	} 
+
+	int endCoord = exonEnds[currentExon];
+
+	if(strand == '+')
+		return std::pair<int,int>(cdsStart,endCoord);
+	else
+		// 'cdsStart' is the end of the coding sequence
+		return std::pair<int,int>(cdsStart+1,endCoord);
+}
+
+std::pair<int,int> lastCodingExon(char strand, int cdsEnd, std::vector<int> exonStarts, std::vector<int> exonEnds){
+	
+	if(strand != '+' && strand != '-')
+		throw std::runtime_error( "Invalid strand value in gene table." );
+
+	if(strand == '+'){
+		
+		return std::pair<int,int>(1,1);
+	}
+	else{
+		
+		return std::pair<int,int>(1,1);
+	}
+}
