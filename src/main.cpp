@@ -31,36 +31,70 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 	 	if(it != gm.end()){
 	 		std::cout << name << " is an element of mymap." << std::endl;
       		// compare with existing ORFs for that gene
-      		it->second.searchORFs(orf_start,orf_end);
+      		it->second.searchORFs(orf_start,orf_end,chr);
 	 	}
 
     	else {
     		std::cout << name << " is not an element of mymap." << std::endl;
     		gm.emplace(std::piecewise_construct, 
 	 		std::forward_as_tuple(name), 
-	 		std::forward_as_tuple(name, orf_start, orf_end));
+	 		std::forward_as_tuple(name, orf_start, orf_end, chr));
     	}
 	}
 }
 
+void summarize(std::map<std::string,Gene> &gm){
+	int totalORF = 0;
+	for (const auto &pair : gm) {
+        	totalORF+= pair.second.numORFs();
+    }
+
+    std::cout << "Gene map has size " << gm.size() << std::endl;
+    std::cout << "There are " << totalORF << " distinct ORFs in total" << std::endl;
+}
+
+std::string exec(const char* cmd) {
+    std::array<char, 512> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+
 int main () {
-	
+
 	std::map<std::string,Gene> geneMap;
 
 	//------ READ GENE TABLE TO MAP
 	//------ ADD ORFs
 
 	readToMap("src/sample.gene_table", geneMap);
+	summarize(geneMap);
 
 	//------ MAIN
 
-	int totalORF = 0;
+	// for gene in map
 	for (const auto &pair : geneMap) {
-        	totalORF+= pair.second.numORFs();
-    }
 
-    std::cout << "Gene map has size " << geneMap.size() << std::endl;
-    std::cout << "There are " << totalORF << " distinct ORFs in total" << std::endl;
+		// for ORF in gene
+		for (const auto &o : pair.second.getORFs()) {
+			//std::cout << o.getChrom() << ":" << o.getStart() << "-" << o.getEnd() << std::endl;
+			// fetch the sequence of terminal exons
+			char cmd[512];
+			sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", o.getChrom().c_str(),
+			std::to_string(o.getStart()).c_str(),
+			std::to_string(o.getEnd()).c_str());
+			auto result = exec(cmd);
+			std::cout << result << std::endl;
+
+		}
+	}
+
     return 0;
 }
 

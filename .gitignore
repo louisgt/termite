@@ -15,3 +15,5 @@ bin/
 src/hg38.gene_table
 
 *.o
+output.fa
+twoBitToFar.err

@@ -6,6 +6,10 @@
 #include <sstream>
 #include <vector>
 #include <map>
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <array>
 
 std::vector<int> scanExons(std::string exonList);
 
