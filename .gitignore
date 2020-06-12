@@ -12,3 +12,6 @@ bin/
 # exclude external models from source control
 /src/external/
 .DS_Store
+src/hg38.gene_table
+
+*.o
