@@ -19,6 +19,6 @@ Project Organization
     │   └── figures        <- Figures for the manuscript or reports
     ├── references         <- Data dictionaries, manuals, papers and all other explanatory materials.
     └── src                <- Source code for this project
-        ├── include       <- Any external source code, e.g., pull other git projects, or external libraries
+        └── include       <- Any external source code, e.g., pull other git projects, or external libraries
 
 --------
