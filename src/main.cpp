@@ -35,7 +35,8 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 	 		std::cerr << "Exception thrown: " << e.what() << std::endl;
 	 	}
 
-	 	//std::cout << firstExon.first << "-" << firstExon.second << std::endl;
+	 	std::cout << firstExon.first << "-" << firstExon.second << std::endl;
+	 	std::cout << lastExon.first << "-" << lastExon.second << std::endl;
 
 	 	// try to find gene in map
 	 	auto it = gm.find(name);
