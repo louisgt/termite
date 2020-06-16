@@ -7,16 +7,16 @@ class ORF
 {
 public:
 	ORF();
-    ORF(int, int, std::string);
+    ORF(std::pair<int,int>, std::pair<int,int>, std::string);
     ~ORF(); 
 
-    int getStart() const {return CDS_start_;}
-    int getEnd() const {return CDS_end_;}
+    int getStart() const {return firstExon_.first;}
+    int getEnd() const {return lastExon_.second;}
     std::string getChrom() const {return chr_;}
 
 protected:
-    int CDS_start_;
-    int CDS_end_;
+    std::pair<int,int> firstExon_;
+    std::pair<int,int> lastExon_;
     std::string chr_;
 };
 

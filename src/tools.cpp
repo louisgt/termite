@@ -27,9 +27,13 @@ std::pair<int,int> firstCodingExon(char strand, int cdsStart, std::vector<int> e
 		throw std::runtime_error( "Invalid strand value in gene table." );
 
 	int currentExon = 0;
+	int max = exonStarts.size() - 1;
 
 	// we want to identify the index of the first coding exon
 	while(cdsStart>exonStarts[currentExon]){
+		// if we are on the last exon
+		if(currentExon == max)
+			break;
 		// lookup next exon
 		if(cdsStart<exonStarts[currentExon+1])
 			// ATG is located in currentExon
@@ -47,10 +51,13 @@ std::pair<int,int> lastCodingExon(char strand, int cdsEnd, std::vector<int> exon
 	if(strand != '+' && strand != '-')
 		throw std::runtime_error( "Invalid strand value in gene table." );
 
-	int currentExon = exonStarts.size() - 1;
+	int currentExon = exonEnds.size() - 1;
 
-	// we want to identify the index of the first coding exon
+	// we want to identify the index of the last coding exon
 	while(cdsEnd<exonEnds[currentExon]){
+		// if we are on the first exon
+		if(currentExon == 0)
+			break;
 		// lookup next exon
 		if(cdsEnd>exonEnds[currentExon-1])
 			// ATG is located in currentExon

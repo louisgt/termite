@@ -35,6 +35,7 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 	 		std::cerr << "Exception thrown: " << e.what() << std::endl;
 	 	}
 
+	 	//std::cout << name << std::endl;
 	 	std::cout << firstExon.first << "-" << firstExon.second << std::endl;
 	 	std::cout << lastExon.first << "-" << lastExon.second << std::endl;
 
@@ -42,16 +43,16 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 	 	auto it = gm.find(name);
 
 	 	if(it != gm.end()){
-	 		std::cout << name << " is an element of mymap." << std::endl;
+	 		//std::cout << name << " is an element of mymap." << std::endl;
       		// compare with existing ORFs for that gene
-      		it->second.searchORFs(cdsStart,cdsEnd,chr);
+      		it->second.searchORFs(firstExon,lastExon,chr);
 	 	}
 
     	else {
-    		std::cout << name << " is not an element of mymap." << std::endl;
+    		//std::cout << name << " is not an element of mymap." << std::endl;
     		gm.emplace(std::piecewise_construct, 
 	 		std::forward_as_tuple(name), 
-	 		std::forward_as_tuple(name, cdsStart, cdsEnd, chr));
+	 		std::forward_as_tuple(name, firstExon, lastExon, chr));
     	}
 	}
 }

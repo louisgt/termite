@@ -9,7 +9,7 @@ class Gene
 {
 public:
 	Gene();
-    Gene(std::string, int, int, std::string);
+    Gene(std::string, std::pair<int,int>, std::pair<int,int>, std::string);
     ~Gene(); 
 
     std::string getName() const {return name_;}
@@ -18,9 +18,9 @@ public:
 
     int numORFs() const {return ORFs_.size();}
 
-    void addORF(int,int,std::string);
+    void addORF(std::pair<int,int>,std::pair<int,int>,std::string);
 
-    void searchORFs(int,int,std::string);
+    void searchORFs(std::pair<int,int>,std::pair<int,int>,std::string);
 
 protected:
     std::string name_;

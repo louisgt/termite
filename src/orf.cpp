@@ -5,11 +5,11 @@ ORF::ORF(){
 	//std::cout << "ORF: default ctor" << std::endl;
 }
 
-ORF::ORF(int nterm, int cterm, std::string chrom)
+ORF::ORF(std::pair<int,int> first, std::pair<int,int> last, std::string chrom)
 {
 	//std::cout << "ORF: explicit ctor: constructing ORF " << nterm << "-" << cterm << std::endl;
-	CDS_start_ = nterm;
-	CDS_end_ = cterm;
+	firstExon_ = first;
+	lastExon_ = last;
 	chr_ = chrom;
 }
 
