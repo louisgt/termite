@@ -12,6 +12,8 @@ public:
 
     int getStart() const {return firstExon_.first;}
     int getEnd() const {return lastExon_.second;}
+    std::pair<int,int> getFirst() const {return firstExon_;}
+    std::pair<int,int>  getLast() const {return lastExon_;}
     std::string getChrom() const {return chr_;}
 
 protected:

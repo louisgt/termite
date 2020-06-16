@@ -43,7 +43,7 @@ std::pair<int,int> firstCodingExon(char strand, int cdsStart, std::vector<int> e
 
 	int endCoord = exonEnds[currentExon];
 
-	return std::pair<int,int>(cdsStart+1,endCoord);
+	return std::pair<int,int>(cdsStart,endCoord);
 }
 
 std::pair<int,int> lastCodingExon(char strand, int cdsEnd, std::vector<int> exonStarts, std::vector<int> exonEnds){
@@ -67,6 +67,6 @@ std::pair<int,int> lastCodingExon(char strand, int cdsEnd, std::vector<int> exon
 
 	int endCoord = exonStarts[currentExon];
 
-	return std::pair<int,int>(endCoord+1,cdsEnd);
+	return std::pair<int,int>(endCoord,cdsEnd);
 
 }

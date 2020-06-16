@@ -36,7 +36,7 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 	 	}
 
 	 	//std::cout << name << std::endl;
-	 	std::cout << firstExon.first << "-" << firstExon.second << std::endl;
+	 	//std::cout << firstExon.first << "-" << firstExon.second << std::endl;
 	 	std::cout << lastExon.first << "-" << lastExon.second << std::endl;
 
 	 	// try to find gene in map
@@ -101,10 +101,10 @@ int main () {
 			// fetch the sequence of terminal exons
 			char cmd[512];
 			sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", o.getChrom().c_str(),
-			std::to_string(o.getStart()).c_str(),
-			std::to_string(o.getEnd()).c_str());
+			std::to_string(o.getLast().first).c_str(),
+			std::to_string(o.getLast().second).c_str());
 			auto result = exec(cmd);
-			//std::cout << result << std::endl;
+			std::cout << result << std::endl;
 
 		}
 	}
