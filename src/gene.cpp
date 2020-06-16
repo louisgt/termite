@@ -72,10 +72,16 @@ void Gene::searchN(std::string chrom, char strand, int start, int stop){
  		if(t.getStrand() != strand)
  			continue;
 
- 	 	if(t.getStart() == start && t.getStop() == stop && t.getChr() == chrom){
- 			return;
-
+ 		// we will only consider the Start position for tagging
+ 		if(strand == '+'){
+ 			if(t.getStart() == start)
+ 				return;
  		}
+ 		// thus we need to account for strand
+ 		else{
+ 			if(t.getStop() == stop)
+ 				return;
+ 		} 	 	
  	}
  	addN(chrom, strand, start, stop);
 }
@@ -89,10 +95,16 @@ void Gene::searchC(std::string chrom, char strand, int start, int stop){
  		if(t.getStrand() != strand)
  			continue;
 
- 	 	if(t.getStart() == start && t.getStop() == stop && t.getChr() == chrom){
- 			return;
-
+ 		// we will only consider the Stop position for tagging
+ 		if(strand == '+'){
+ 			if(t.getStop() == stop)
+ 				return;
  		}
+ 		// thus we need to account for strand
+ 		else{
+ 			if(t.getStart() == start)
+ 				return;
+ 		} 	
  	}
  	addC(chrom, strand, start, stop);
 }
