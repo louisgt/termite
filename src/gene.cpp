@@ -52,6 +52,7 @@ void Gene::addC(std::string chrom, char strand, int first, int last){
 // each one has an additional entry mapping to the other, but they are on opposite strands so there are 4 entries instead of 2
 
 void Gene::searchTermini(std::string chrom, char strand, std::pair<int,int> firstExon, std::pair<int,int> lastExon){
+	// we need to consider orientation of the coding sequence
 	if(strand == '+'){
     	searchN(chrom, strand, firstExon.first, firstExon.second);
 		searchC(chrom, strand, lastExon.first, lastExon.second);
@@ -63,47 +64,64 @@ void Gene::searchTermini(std::string chrom, char strand, std::pair<int,int> firs
 	
 }
 
+// IMPORTANT NOTE
+// At first glance there is a great deal of code duplication in the search algorithm
+// However refactoring is complex and will likely lead to a contrived search function with lots of bool arguments...
+// 	...given that we search must search two different named vectors, and cannot go around strandedness
+// For now, limiting the number of arguments is more readable, thus readability overrules DRY in this cas
+
 void Gene::searchN(std::string chrom, char strand, int start, int stop){
- 	for (const auto& t : N_){
+ 	for (auto& t : N_){
 
- 		if(t.getChr() != chrom)
- 			continue;
-
- 		if(t.getStrand() != strand)
+ 		// consider pseudoautosomal genes (exist on X and Y chr)
+ 		if(t.getChr() != chrom || t.getStrand() != strand)
  			continue;
 
  		// we will only consider the Start position for tagging
  		if(strand == '+'){
  			if(t.getStart() == start)
+ 			{
+ 				if(stop - start > t.codingRange())
+ 					t.setStop(stop);
  				return;
+ 			}
  		}
- 		// thus we need to account for strand
+ 		// we need to account for strand
  		else{
- 			if(t.getStop() == stop)
- 				return;
- 		} 	 	
+ 			if(t.getStop() == stop){
+ 				if(stop - start > t.codingRange())
+ 					t.setStart(start);
+ 				return;		
+ 			} 	 	
+ 		}
  	}
  	addN(chrom, strand, start, stop);
 }
 
 void Gene::searchC(std::string chrom, char strand, int start, int stop){
- 	for (const auto& t : C_){
+ 	for (auto& t : C_){
 
- 		if(t.getChr() != chrom)
- 			continue;
-
- 		if(t.getStrand() != strand)
+ 		// consider pseudoautosomal genes (exist on X and Y chr)
+ 		if(t.getChr() != chrom || t.getStrand() != strand)
  			continue;
 
  		// we will only consider the Stop position for tagging
  		if(strand == '+'){
  			if(t.getStop() == stop)
+ 			{
+ 				if(stop - start > t.codingRange())
+ 					t.setStart(start);
  				return;
+ 			}	
  		}
  		// thus we need to account for strand
  		else{
  			if(t.getStart() == start)
+ 			{
+ 				if(stop - start > t.codingRange())
+ 					t.setStop(stop);
  				return;
+ 			}
  		} 	
  	}
  	addC(chrom, strand, start, stop);

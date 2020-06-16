@@ -13,6 +13,9 @@ public:
 
     std::string getName() const {return name_;}
 
+    std::vector<Terminus> &getNTermini() {return N_;}
+    std::vector<Terminus> &getCTermini() {return C_;}
+    
     std::vector<Terminus> getNTermini() const {return N_;}
     std::vector<Terminus> getCTermini() const {return C_;}
 
