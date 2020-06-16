@@ -1,17 +1,19 @@
 #include "gene.h"
 
-
-Gene::Gene(){
-	//std::cout << "Gene: default ctor. " << std::endl;
-}
-
-
-Gene::Gene(std::string name, std::pair<int,int> first, std::pair<int,int> last, std::string chrom)
+Gene::Gene(std::string name, std::string chrom, char strand, std::pair<int,int> first, std::pair<int,int> last)
+ : name_(name)
 {
-	//std::cout << "Gene: explicit ctor: constructing gene " << name << std::endl;
-    name_ = name;
-    ORFs_.reserve(RESERVE_ORF_NUM);
-    addORF(first,last,chrom);
+    N_.reserve(RESERVE_TERM_NUM);
+    C_.reserve(RESERVE_TERM_NUM);
+    
+    if(strand == '+'){
+    	addN(chrom, strand, first.first, first.second);
+    	addC(chrom, strand, last.first, last.second);
+    }
+    else{
+    	addN(chrom, strand, last.first, last.second);
+    	addC(chrom, strand, first.first, first.second);
+    }
 }
 
 
@@ -20,19 +22,77 @@ Gene::~Gene()
 	//std::cout << "Gene: destructor: destructing gene " << name_ << std::endl;
 }
 
-void Gene::addORF(std::pair<int,int> first, std::pair<int,int> last, std::string chrom){
-	ORFs_.emplace_back(first,last,chrom);
+void Gene::addN(std::string chrom, char strand, int first, int last){
+	N_.emplace_back(chrom, strand, first, last);
 }
 
-void Gene::searchORFs(std::pair<int,int> first, std::pair<int,int> last, std::string chrom){
-	//std::cout << "Searching ORFs..." << std::endl;
-	for (const auto& o : ORFs_){
-	 	if(o.getStart() == first.first && o.getEnd() == last.second && o.getChrom() == chrom){
-			//std::cout << "An accession of gene " << name_ << " with the same range already exists in map" << std::endl;
-			//std::cout << "Stopping search." << std::endl;
-			return;
-		}
-	}
-	//std::cout << "NO accession of gene " << name_ << " with the same range already exists in map" << std::endl;
-	addORF(first,last,chrom);
+void Gene::addC(std::string chrom, char strand, int first, int last){
+	C_.emplace_back(chrom, strand, first, last);
+}
+
+
+// IMPORTANT NOTE 1
+// For the human reference genome, there is a very small set of gene names that are found on more than 1 chromosome
+// the overwhelming majority of those genes are found in the pseudoautosomal regions of the X and Y chromosomes
+// the remainder are most likely annotation errors from UCSC/Ensembl (see olfactory receptor genes like OR4F16)
+// 
+// scenario #1: we add duplicate sequences and get duplicate guides
+// ex: gene SHOX found on chrX and chrY
+// added to the gene map once, but termini are added separately for each chromosomal entry
+
+// sc
+
+// IMPORTANT NOTE 2
+// For the human reference genome, there is a small set of gene names that are found on both strands of the same chromosome
+// the overwhelming majority of those genes seem to be misannotation between paralogs
+// the remainder are most likely annotation errors from UCSC/Ensembl (see olfactory receptor genes like OR4F16)
+//  
+// scenario #1: we register both strands get duplicate guides mapping to the misannotated gene
+// ex: genes VCY and VCY1B
+// each one has an additional entry mapping to the other, but they are on opposite strands so there are 4 entries instead of 2
+
+void Gene::searchTermini(std::string chrom, char strand, std::pair<int,int> firstExon, std::pair<int,int> lastExon){
+	if(strand == '+'){
+    	searchN(chrom, strand, firstExon.first, firstExon.second);
+		searchC(chrom, strand, lastExon.first, lastExon.second);
+    }
+    else{
+    	searchN(chrom, strand, lastExon.first, lastExon.second);
+    	searchC(chrom, strand, firstExon.first, firstExon.second);	
+    }
+	
+}
+
+void Gene::searchN(std::string chrom, char strand, int start, int stop){
+ 	for (const auto& t : N_){
+
+ 		if(t.getChr() != chrom)
+ 			continue;
+
+ 		if(t.getStrand() != strand)
+ 			continue;
+
+ 	 	if(t.getStart() == start && t.getStop() == stop && t.getChr() == chrom){
+ 			return;
+
+ 		}
+ 	}
+ 	addN(chrom, strand, start, stop);
+}
+
+void Gene::searchC(std::string chrom, char strand, int start, int stop){
+ 	for (const auto& t : C_){
+
+ 		if(t.getChr() != chrom)
+ 			continue;
+
+ 		if(t.getStrand() != strand)
+ 			continue;
+
+ 	 	if(t.getStart() == start && t.getStop() == stop && t.getChr() == chrom){
+ 			return;
+
+ 		}
+ 	}
+ 	addC(chrom, strand, start, stop);
 }

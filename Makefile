@@ -26,14 +26,14 @@ uninstall:
 
 
 # link
-$(TERMITE): termite.o tools.o orf.o gene.o 
-	$(LINK) termite.o tools.o orf.o gene.o -o termite
+$(TERMITE): termite.o tools.o terminus.o gene.o 
+	$(LINK) termite.o tools.o terminus.o gene.o -o termite
 
 # compile different units
 tools.o: ./src/tools.cpp
 	$(COMPILE) -o tools.o ./src/tools.cpp
-orf.o: ./src/orf.cpp
-	$(COMPILE) -o orf.o ./src/orf.cpp
+terminus.o: ./src/terminus.cpp
+	$(COMPILE) -o terminus.o ./src/terminus.cpp
 gene.o: ./src/gene.cpp
 	$(COMPILE) -o gene.o ./src/gene.cpp
 termite.o: ./src/main.cpp

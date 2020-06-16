@@ -37,34 +37,33 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 
 	 	//std::cout << name << std::endl;
 	 	//std::cout << firstExon.first << "-" << firstExon.second << std::endl;
-	 	std::cout << lastExon.first << "-" << lastExon.second << std::endl;
+	 	//std::cout << lastExon.first << "-" << lastExon.second << std::endl;
 
 	 	// try to find gene in map
 	 	auto it = gm.find(name);
 
 	 	if(it != gm.end()){
 	 		//std::cout << name << " is an element of mymap." << std::endl;
-      		// compare with existing ORFs for that gene
-      		it->second.searchORFs(firstExon,lastExon,chr);
+      		it->second.searchTermini(chr, strand, firstExon, lastExon);
 	 	}
 
     	else {
     		//std::cout << name << " is not an element of mymap." << std::endl;
     		gm.emplace(std::piecewise_construct, 
 	 		std::forward_as_tuple(name), 
-	 		std::forward_as_tuple(name, firstExon, lastExon, chr));
+	 		std::forward_as_tuple(name, chr, strand, firstExon, lastExon));
     	}
 	}
 }
 
 void summarize(std::map<std::string,Gene> &gm){
-	int totalORF = 0;
+	int totalTerm = 0;
 	for (const auto &pair : gm) {
-        	totalORF+= pair.second.numORFs();
+        	totalTerm+= pair.second.totalTermini();
     }
 
     std::cout << "Gene map has size " << gm.size() << std::endl;
-    std::cout << "There are " << totalORF << " distinct ORFs in total" << std::endl;
+    std::cout << "There are " << totalTerm << " distinct termini in total" << std::endl;
 }
 
 std::string exec(const char* cmd) {
@@ -92,19 +91,32 @@ int main () {
 
 	//------ MAIN
 
-	// for gene in map
 	for (const auto &pair : geneMap) {
-
-		// for ORF in gene
-		for (const auto &o : pair.second.getORFs()) {
-			//std::cout << o.getChrom() << ":" << o.getStart() << "-" << o.getEnd() << std::endl;
+		std::cout << pair.first << std::endl;
+		std::cout << "NTERM list" << std::endl;
+		// for termini in gene
+		for (const auto &t : pair.second.getNTermini()) {
+			std::cout << t.getChr() << ":" << t.getStart() << "-" << t.getStop() << std::endl;
 			// fetch the sequence of terminal exons
-			char cmd[512];
-			sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", o.getChrom().c_str(),
-			std::to_string(o.getLast().first).c_str(),
-			std::to_string(o.getLast().second).c_str());
-			auto result = exec(cmd);
-			std::cout << result << std::endl;
+			//char cmd[512];
+			//sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", o.getChr().c_str(),
+			//std::to_string(o.getLast().first).c_str(),
+			//std::to_string(o.getLast().second).c_str());
+			//auto result = exec(cmd);
+			//std::cout << result << std::endl;
+
+		}
+		std::cout << "CTERM list" << std::endl;
+		// for termini in gene
+		for (const auto &t : pair.second.getCTermini()) {
+			std::cout << t.getChr() << ":" << t.getStart() << "-" << t.getStop() << std::endl;
+			// fetch the sequence of terminal exons
+			//char cmd[512];
+			//sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", o.getChr().c_str(),
+			//std::to_string(o.getLast().first).c_str(),
+			//std::to_string(o.getLast().second).c_str());
+			//auto result = exec(cmd);
+			//std::cout << result << std::endl;
 
 		}
 	}
