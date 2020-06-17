@@ -15,7 +15,7 @@ public:
 
     std::vector<Terminus> &getNTermini() {return N_;}
     std::vector<Terminus> &getCTermini() {return C_;}
-    
+
     std::vector<Terminus> getNTermini() const {return N_;}
     std::vector<Terminus> getCTermini() const {return C_;}
 
@@ -36,8 +36,9 @@ public:
 protected:
     std::string name_;
 
-    std::vector<Terminus> C_;
     std::vector<Terminus> N_;
+    std::vector<Terminus> C_;
+    
 };
 
 #endif
