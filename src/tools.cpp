@@ -2,7 +2,7 @@
 
 // Scan a string that contains exon start/end coordinates
 // Push coordinates as int in vector
-std::vector<int> scanExons(std::string exonList){
+std::vector<int> scanExons(const std::string exonList){
 	std::stringstream exons(exonList);
 	std::vector<int> result;
 
@@ -21,7 +21,7 @@ std::vector<int> scanExons(std::string exonList){
 	return result;
 }
 
-std::pair<int,int> firstCodingExon(char strand, int cdsStart, std::vector<int> exonStarts, std::vector<int> exonEnds){
+std::pair<int,int> firstCodingExon(const char strand, const int cdsStart, const std::vector<int> exonStarts, const std::vector<int> exonEnds){
 	
 	if(strand != '+' && strand != '-')
 		throw std::runtime_error( "Invalid strand value in gene table." );
@@ -46,7 +46,7 @@ std::pair<int,int> firstCodingExon(char strand, int cdsStart, std::vector<int> e
 	return std::pair<int,int>(cdsStart,endCoord);
 }
 
-std::pair<int,int> lastCodingExon(char strand, int cdsEnd, std::vector<int> exonStarts, std::vector<int> exonEnds){
+std::pair<int,int> lastCodingExon(const char strand, const int cdsEnd, const std::vector<int> exonStarts, const std::vector<int> exonEnds){
 	
 	if(strand != '+' && strand != '-')
 		throw std::runtime_error( "Invalid strand value in gene table." );

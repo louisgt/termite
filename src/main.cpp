@@ -6,7 +6,7 @@ using namespace io;
 // Column separator for gene table
 const char SEP = '\t';
 
-void readToMap(std::string file, std::map<std::string,Gene> &gm){
+void readToMap(const std::string file, std::map<std::string,Gene> &gm){
 	CSVReader<11,trim_chars<' '>, no_quote_escape<SEP>> in(file);
   	in.read_header(io::ignore_extra_column, "name", "accession", "chrom", "strand","txStart",
   											"txEnd","cdsStart","cdsEnd","exonCount","exonStarts","exonEnds");
@@ -56,13 +56,19 @@ void readToMap(std::string file, std::map<std::string,Gene> &gm){
 	}
 }
 
-void summarize(std::map<std::string,Gene> &gm){
+void summarize(const std::map<std::string,Gene> &gm){
 	int totalTerm = 0;
+	int totalN = 0;
+	int totalC = 0;
 	for (const auto &pair : gm) {
-        	totalTerm+= pair.second.totalTermini();
+        	totalTerm += pair.second.totalTermini();
+        	totalN += pair.second.numN();
+        	totalC += pair.second.numC();
     }
 
     std::cout << "Gene map has size " << gm.size() << std::endl;
+    std::cout << "There are " << totalN << " distinct N-termini" << std::endl;
+    std::cout << "There are " << totalC << " distinct C-termini" << std::endl;
     std::cout << "There are " << totalTerm << " distinct termini in total" << std::endl;
 }
 
@@ -86,8 +92,7 @@ int main () {
 	//------ READ GENE TABLE TO MAP
 	//------ ADD ORFs
 
-	readToMap("src/sample.gene_table", geneMap);
-	summarize(geneMap);
+	readToMap("src/hg38.gene_table", geneMap);
 
 	//------ MAIN
 
@@ -120,6 +125,8 @@ int main () {
 
 		}
 	}
+
+	summarize(geneMap);
 
     return 0;
 }

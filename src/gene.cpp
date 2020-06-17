@@ -1,6 +1,6 @@
 #include "gene.h"
 
-Gene::Gene(std::string name, std::string chrom, char strand, std::pair<int,int> first, std::pair<int,int> last)
+Gene::Gene(const std::string name, const std::string chrom, const char strand, const std::pair<int,int> first, const std::pair<int,int> last)
  : name_(name)
 {
     N_.reserve(RESERVE_TERM_NUM);
@@ -22,11 +22,11 @@ Gene::~Gene()
 	//std::cout << "Gene: destructor: destructing gene " << name_ << std::endl;
 }
 
-void Gene::addN(std::string chrom, char strand, int first, int last){
+void Gene::addN(const std::string chrom, const char strand, const int first, const int last){
 	N_.emplace_back(chrom, strand, first, last);
 }
 
-void Gene::addC(std::string chrom, char strand, int first, int last){
+void Gene::addC(const std::string chrom, const char strand, const int first, const int last){
 	C_.emplace_back(chrom, strand, first, last);
 }
 
@@ -51,7 +51,7 @@ void Gene::addC(std::string chrom, char strand, int first, int last){
 // ex: genes VCY and VCY1B
 // each one has an additional entry mapping to the other, but they are on opposite strands so there are 4 entries instead of 2
 
-void Gene::searchTermini(std::string chrom, char strand, std::pair<int,int> firstExon, std::pair<int,int> lastExon){
+void Gene::searchTermini(const std::string chrom, const char strand, const std::pair<int,int> firstExon, const std::pair<int,int> lastExon){
 	// we need to consider orientation of the coding sequence
 	if(strand == '+'){
     	searchN(chrom, strand, firstExon.first, firstExon.second);
@@ -70,7 +70,7 @@ void Gene::searchTermini(std::string chrom, char strand, std::pair<int,int> firs
 // 	...given that we search must search two different named vectors, and cannot go around strandedness
 // For now, limiting the number of arguments is more readable, thus readability overrules DRY in this cas
 
-void Gene::searchN(std::string chrom, char strand, int start, int stop){
+void Gene::searchN(const std::string chrom, const char strand, const int start, const int stop){
  	for (auto& t : N_){
 
  		// consider pseudoautosomal genes (exist on X and Y chr)
@@ -98,7 +98,7 @@ void Gene::searchN(std::string chrom, char strand, int start, int stop){
  	addN(chrom, strand, start, stop);
 }
 
-void Gene::searchC(std::string chrom, char strand, int start, int stop){
+void Gene::searchC(const std::string chrom, const char strand, const int start, const int stop){
  	for (auto& t : C_){
 
  		// consider pseudoautosomal genes (exist on X and Y chr)

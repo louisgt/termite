@@ -1,6 +1,6 @@
 #include "terminus.h"
 
-Terminus::Terminus(std::string chrom, char strand, int start, int stop)
+Terminus::Terminus(const std::string chrom, const char strand, const int start, const int stop)
  : chrom_(chrom),
    strand_(strand),
    codingStart_(start),
