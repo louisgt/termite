@@ -20,6 +20,9 @@ public:
 
     int codingRange() const {return codingStop_ - codingStart_;}
 
+    std::pair<int,int> getWindowN(int) const;
+    std::pair<int,int> getWindowC(int) const;
+
 
 protected:
     std::string chrom_;
@@ -28,6 +31,8 @@ protected:
     // start and end of coding sequence for given terminal exon
     int codingStart_;
     int codingStop_;
+
+    static const int DOWNSTREAM_PAD = 6;
 
     
 

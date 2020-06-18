@@ -35,20 +35,16 @@ void readToMap(const std::string file, std::map<std::string,Gene> &gm){
 	 		std::cerr << "Exception thrown: " << e.what() << std::endl;
 	 	}
 
-	 	//std::cout << name << std::endl;
-	 	//std::cout << firstExon.first << "-" << firstExon.second << std::endl;
-	 	//std::cout << lastExon.first << "-" << lastExon.second << std::endl;
-
 	 	// try to find gene in map
 	 	auto it = gm.find(name);
 
+	 	// gene found
 	 	if(it != gm.end()){
-	 		//std::cout << name << " is an element of mymap." << std::endl;
       		it->second.searchTermini(chr, strand, firstExon, lastExon);
 	 	}
 
+	 	// add gene
     	else {
-    		//std::cout << name << " is not an element of mymap." << std::endl;
     		gm.emplace(std::piecewise_construct, 
 	 		std::forward_as_tuple(name), 
 	 		std::forward_as_tuple(name, chr, strand, firstExon, lastExon));
@@ -87,6 +83,8 @@ std::string exec(const char* cmd) {
 
 int main () {
 
+	int guideLen = 20;
+
 	std::map<std::string,Gene> geneMap;
 
 	//------ READ GENE TABLE TO MAP
@@ -98,30 +96,37 @@ int main () {
 
 	for (const auto &pair : geneMap) {
 		std::cout << pair.first << std::endl;
-		std::cout << "NTERM list" << std::endl;
+		//std::cout << "NTERM list" << std::endl;
 		// for termini in gene
 		for (const auto &t : pair.second.getNTermini()) {
 			std::cout << t.getChr() << ":" << t.getStart() << "-" << t.getStop() << std::endl;
-			// fetch the sequence of terminal exons
-			//char cmd[512];
-			//sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", o.getChr().c_str(),
-			//std::to_string(o.getLast().first).c_str(),
-			//std::to_string(o.getLast().second).c_str());
-			//auto result = exec(cmd);
-			//std::cout << result << std::endl;
+
+			// fetch the sequence of N-terminal exons
+
+			auto window = t.getWindowN(guideLen);
+
+			char cmd[512];
+			sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", t.getChr().c_str(),
+			std::to_string(window.first).c_str(),
+			std::to_string(window.second).c_str());
+			auto result = exec(cmd);
+			std::cout << result << std::endl;
 
 		}
-		std::cout << "CTERM list" << std::endl;
+		//std::cout << "CTERM list" << std::endl;
 		// for termini in gene
 		for (const auto &t : pair.second.getCTermini()) {
 			std::cout << t.getChr() << ":" << t.getStart() << "-" << t.getStop() << std::endl;
-			// fetch the sequence of terminal exons
-			//char cmd[512];
-			//sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", o.getChr().c_str(),
-			//std::to_string(o.getLast().first).c_str(),
-			//std::to_string(o.getLast().second).c_str());
-			//auto result = exec(cmd);
-			//std::cout << result << std::endl;
+
+			// fetch the sequence of C-terminal exons
+			auto window = t.getWindowN(guideLen);
+			
+			char cmd[512];
+			sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", t.getChr().c_str(),
+			std::to_string(window.first).c_str(),
+			std::to_string(window.second).c_str());
+			auto result = exec(cmd);
+			std::cout << result << std::endl;
 
 		}
 	}
