@@ -68,22 +68,13 @@ void summarize(const std::map<std::string,Gene> &gm){
     std::cout << "There are " << totalTerm << " distinct termini in total" << std::endl;
 }
 
-std::string exec(const char* cmd) {
-    std::array<char, 512> buffer;
-    std::string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) {
-        throw std::runtime_error("popen() failed!");
-    }
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-        result += buffer.data();
-    }
-    return result;
-}
-
 int main () {
 
-	int guideLen = 20;
+	const int guideLen = 20;
+
+	const int maxResCut = 3;
+
+	const int maxNtCut = maxResCut*3;
 
 	std::map<std::string,Gene> geneMap;
 
@@ -94,40 +85,24 @@ int main () {
 
 	//------ MAIN
 
-	for (const auto &pair : geneMap) {
+	for (auto &pair : geneMap) {
 		std::cout << pair.first << std::endl;
 		//std::cout << "NTERM list" << std::endl;
 		// for termini in gene
-		for (const auto &t : pair.second.getNTermini()) {
+		for (auto &t : pair.second.getNTermini()) {
 			std::cout << t.getChr() << ":" << t.getStart() << "-" << t.getStop() << std::endl;
 
 			// fetch the sequence of N-terminal exons
 
-			auto window = t.getWindowN(guideLen);
-
-			char cmd[512];
-			sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", t.getChr().c_str(),
-			std::to_string(window.first).c_str(),
-			std::to_string(window.second).c_str());
-			auto result = exec(cmd);
-			std::cout << result << std::endl;
-
+			int nGuides = t.findGuides(guideLen, maxNtCut, false);
 		}
 		//std::cout << "CTERM list" << std::endl;
 		// for termini in gene
-		for (const auto &t : pair.second.getCTermini()) {
+		for (auto &t : pair.second.getCTermini()) {
 			std::cout << t.getChr() << ":" << t.getStart() << "-" << t.getStop() << std::endl;
 
 			// fetch the sequence of C-terminal exons
-			auto window = t.getWindowN(guideLen);
-			
-			char cmd[512];
-			sprintf(cmd, "./bin/twoBitToFa -seq=%s -start=%s -end=%s data/raw/hg38.2bit stdout", t.getChr().c_str(),
-			std::to_string(window.first).c_str(),
-			std::to_string(window.second).c_str());
-			auto result = exec(cmd);
-			std::cout << result << std::endl;
-
+			int nGuides = t.findGuides(guideLen, maxNtCut, true);
 		}
 	}
 

@@ -20,8 +20,18 @@ public:
 
     int codingRange() const {return codingStop_ - codingStart_;}
 
-    std::pair<int,int> getWindowN(int) const;
-    std::pair<int,int> getWindowC(int) const;
+    // findGuides
+    // instead of getWindow
+    int findGuides(int,int,bool);
+
+    int searchWindow(std::pair<int,int>, bool);
+
+    // need a method that takes a string sequence
+        // thread through sequence in search of PAMs
+        // when PAM is found, create a guide instance and push to vector
+
+    std::pair<int,int> getWindowN(int, int) const;
+    std::pair<int,int> getWindowC(int, int) const;
 
 
 protected:
@@ -33,8 +43,7 @@ protected:
     int codingStop_;
 
     static const int DOWNSTREAM_PAD = 6;
-
-    
+    static const char *REVERSE_COMP;
 
 };
 

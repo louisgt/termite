@@ -26,8 +26,8 @@ uninstall:
 
 
 # link
-$(TERMITE): termite.o tools.o terminus.o gene.o 
-	$(LINK) termite.o tools.o terminus.o gene.o -o termite
+$(TERMITE): tools.o terminus.o gene.o termite.o
+	$(LINK) tools.o terminus.o gene.o termite.o -o termite
 
 # compile different units
 tools.o: ./src/tools.cpp

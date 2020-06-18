@@ -16,4 +16,6 @@ std::vector<int> scanExons(std::string exonList);
 std::pair<int,int> firstCodingExon(char,int,std::vector<int>,std::vector<int>);
 std::pair<int,int> lastCodingExon(char,int,std::vector<int>,std::vector<int>);
 
+std::string exec(const char*);
+
 #endif
